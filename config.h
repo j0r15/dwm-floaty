@@ -13,7 +13,7 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 static const int user_bh            = 30;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
 static const int vertpad            = 10;       /* vertical padding of bar */
 static const int sidepad            = 10;       /* horizontal padding of bar */
-static const char *fonts[]          = { "sfmono:size=10", "fontawesome:size=12", "fontawesome5prolight:size=12" };
+static const char *fonts[]          = { "NotoSansMono Nerd Font:style=Regular:size=10" };
 static const char dmenufont[]       = "sfmono:size=10";
 static const char col_gray1[]       = "#202027";
 static const char col_gray2[]       = "#444444";
@@ -36,15 +36,17 @@ static const unsigned int alphas[][3]      = {
 };
 
 static const char *const autostart[] = {
-	"sh", "-c", "feh --bg-fill /home/chloe/wallpaper.jpg", NULL,
         "sh", "-c", "dwmblocks", NULL,
-        "sh", "-c", "xbindkeys", NULL,
         "sh", "-c", "picom --experimental-backends", NULL,
         NULL
 };
 
 /* tagging */
-static const char *tags[] = { "", /*""*/"", "", "", "" };
+static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+
+#include <X11/XF86keysym.h>
+#include "shiftview.c"
+
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -54,6 +56,10 @@ static const Rule rules[] = {
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+        { "Spotify",  NULL,       NULL,       1 << 4,       1,           -1 },
+	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
+	{ "moolticute",  NULL,    NULL,       1 << 6,       1,           -1 },
+
 };
 
 /* layout(s) */
@@ -65,15 +71,15 @@ static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },    /* first entry is default */
 	{ "><>",      NULL },    /* no layout function means floating behavior */
-	{ "[M]",      monocle },
 	{ "|M|",      centeredmaster },
+	/*{ "[M]",      monocle },
 	{ ">M>",      centeredfloatingmaster },
 	{ "TTT",      bstack },
-	{ "===",      bstackhoriz },
+	{ "===",      bstackhoriz },*/
 };
 
 /* key definitions */
-#define MODKEY Mod1Mask
+#define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -85,22 +91,29 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, "-c", "-l", "10", "-w", "500", "-h", "35", NULL };
-static const char *termcmd[]  = { "termite", NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+
+static const char *termcmd[]  = { "st", NULL };
+static const char scratchpadname[] = "scratchpad";
+static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
+static const char *webbrowser[] = { "brave", NULL};
+static const char *mailclient[] = { "thunderbird", NULL};
+static const char *nmtui[] = { "st", "-t", "nmtui", "-g", "120x34", "-e", "nmtui", NULL };
+
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
+	{ MODKEY,                       XK_o,      incnmaster,     {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_o,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY|ShiftMask,             XK_equal,  incrgaps,       {.i = +1 } },
-        { MODKEY,                       XK_minus,  incrgaps,       {.i = -1 } },
+	//{ MODKEY|ShiftMask,           XK_equal,  incrgaps,       {.i = +1 } },
+        //{ MODKEY,                     XK_minus,  incrgaps,       {.i = -1 } },
         //{ MODKEY|ShiftMask,           XK_equal,  incrogaps,      {.i = +1 } },
         //{ MODKEY,                     XK_minus,  incrogaps,      {.i = -1 } },
         { MODKEY|ShiftMask|ControlMask, XK_equal,  incrigaps,      {.i = +1 } },
@@ -109,12 +122,11 @@ static Key keys[] = {
         { MODKEY|ControlMask,           XK_equal,  defaultgaps,    {0} },
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+	{ MODKEY,                       XK_q,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[3]} },
-	{ MODKEY,                       XK_o,      setlayout,      {.v = &layouts[4]} },
+	{ MODKEY,                       XK_y,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_i,      setlayout,      {.v = &layouts[3]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
@@ -123,6 +135,9 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+        { MODKEY,                       XK_z,           incrgaps,       {.i = -20 } },
+        { MODKEY|ShiftMask,             XK_z,           incrgaps,       {.i = +20 } },
+        { MODKEY,                       XK_s,           togglesticky,   {0} },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
@@ -133,6 +148,31 @@ static Key keys[] = {
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+
+
+	//services
+        { MODKEY,                       XK_a,           spawn,          SHCMD("st -e alsamixer ; pkill -RTMIN+10 dwmblocks") },
+        { MODKEY,                       XK_d,           spawn,          {.v = dmenucmd } },
+        { MODKEY|ShiftMask,             XK_d,           togglegaps,     {0} },
+        { MODKEY,                       XK_f,           togglefullscr,  {0} },
+        { MODKEY,                       XK_g,           shiftview,      { .i = -1 } },
+        { MODKEY,                       XK_semicolon,   shiftview,      { .i = 1 } },
+        { MODKEY,                       XK_Return,      spawn,          {.v = termcmd } },
+	{ MODKEY|ShiftMask,             XK_Return,      togglescratch,  {.v = scratchpadcmd } },
+        { MODKEY|ShiftMask,             XK_x,           spawn,          SHCMD("[ \"$(printf \"No\\nYes\" | dmenu -i -nb darkred -sb red -sf white -nf gray -p \"Shutdown computer?\")\" = Yes ] && shutdown -h now") },
+        { MODKEY|ShiftMask,             XK_Delete,      spawn,          SHCMD("[ \"$(printf \"No\\nYes\" | dmenu -i -nb darkred -sb red -sf white -nf gray -p \"Reboot?\")\" = Yes ] && reboot") },
+	{ MODKEY|ShiftMask,             XK_BackSpace,   spawn,          SHCMD("[ \"$(printf \"No\\nYes\" | dmenu -i -nb darkred -sb red -sf white -nf gray -p \"Logout?\")\" = Yes ] && pkill -u $USER ") },
+
+	{ MODKEY|ShiftMask,             XK_c,           spawn,          SHCMD("showclip") },
+        { MODKEY|ShiftMask,             XK_v,           spawn,          SHCMD("killall picom || picom -b -o .9") },
+        { MODKEY|ShiftMask,             XK_b,           spawn,          SHCMD("nitrogen ~/backgrounds --random --set-zoom-fill ") },
+        { MODKEY,                       XK_w,           spawn,          {.v = webbrowser } },
+        { MODKEY|ShiftMask,             XK_w,           spawn,          {.v = nmtui } }, /* Networkmanager TUI*/
+        { MODKEY,                       XK_e,           spawn,          {.v = mailclient } },
+        { MODKEY,                       XK_r,           spawn,          SHCMD("st -e ranger") },
+	{ MODKEY|ShiftMask,             XK_r,           spawn,          SHCMD("st -e sudo ranger") },
+
+
 };
 
 /* button definitions */
