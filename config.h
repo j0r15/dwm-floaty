@@ -37,7 +37,7 @@ static const unsigned int alphas[][3]      = {
 
 static const char *const autostart[] = {
         "sh", "-c", "dwmblocks", NULL,
-        "sh", "-c", "picom --experimental-backends", NULL,
+        "sh", "-c", "picom", NULL,
         NULL
 };
 
@@ -56,7 +56,7 @@ static const Rule rules[] = {
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
-        { "Spotify",  NULL,       NULL,       1 << 4,       1,           -1 },
+  { "Spotify",  NULL,       NULL,       1 << 4,       1,           -1 },
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 	{ "moolticute",  NULL,    NULL,       1 << 6,       1,           -1 },
 
@@ -113,20 +113,19 @@ static Key keys[] = {
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
 	//{ MODKEY|ShiftMask,           XK_equal,  incrgaps,       {.i = +1 } },
-        //{ MODKEY,                     XK_minus,  incrgaps,       {.i = -1 } },
-        //{ MODKEY|ShiftMask,           XK_equal,  incrogaps,      {.i = +1 } },
-        //{ MODKEY,                     XK_minus,  incrogaps,      {.i = -1 } },
-        { MODKEY|ShiftMask|ControlMask, XK_equal,  incrigaps,      {.i = +1 } },
-        { MODKEY|ControlMask,           XK_minus,  incrigaps,      {.i = -1 } },
-        { MODKEY,                       XK_g,      togglegaps,     {0} },
-        { MODKEY|ControlMask,           XK_equal,  defaultgaps,    {0} },
+  //{ MODKEY,                     XK_minus,  incrgaps,       {.i = -1 } },
+  //{ MODKEY|ShiftMask,           XK_equal,  incrogaps,      {.i = +1 } },
+  //{ MODKEY,                     XK_minus,  incrogaps,      {.i = -1 } },
+  { MODKEY|ShiftMask|ControlMask, XK_equal,  incrigaps,      {.i = +1 } },
+  { MODKEY|ControlMask,           XK_minus,  incrigaps,      {.i = -1 } },
+  { MODKEY,                       XK_g,      togglegaps,     {0} },
+  { MODKEY|ControlMask,           XK_equal,  defaultgaps,    {0} },
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY,                       XK_q,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_y,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_i,      setlayout,      {.v = &layouts[3]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
@@ -147,7 +146,7 @@ static Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	},
 
 
 	//services
